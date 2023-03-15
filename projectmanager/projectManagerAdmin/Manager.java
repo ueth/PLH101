@@ -7,6 +7,7 @@ public class Manager extends Employee{
 
     Manager(String id, String name, String empOfficeNo, String empOfficePhone){
         super(id, name, empOfficeNo, empOfficePhone);
+        //promotionDate = new Date();
 
     }
 

@@ -9,6 +9,7 @@ public class Developer extends Employee{
 
     Developer(String  id,  String name, String empOfficeNo, String empOfficePhone, Globals.programmingLanguages[] languages){
         super(id, name, empOfficeNo, empOfficePhone);
+        topRatedLanguages = languages;
 
     }
 

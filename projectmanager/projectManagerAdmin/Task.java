@@ -12,7 +12,12 @@ public class Task {
     private int taskDuration;
 
     Task(String id, String title, Date start, Date end, Globals.status stat){
-
+        taskID = id;
+        taskTitle = title;
+        taskFromDate = start;
+        taskEndDate = end;
+        taskStatus = stat;
+        taskDuration = Globals.computeDuration(start, end);
     }
 
     @Override
