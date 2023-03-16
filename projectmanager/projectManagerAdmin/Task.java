@@ -4,7 +4,7 @@ import utils.Globals;
 
 import java.util.Date;
 
-public class Task {
+public class Task implements Comparable<Task>{
     private String taskID, taskTitle;
     private Globals.status taskStatus;
     private Date taskFromDate;
@@ -16,8 +16,15 @@ public class Task {
         taskTitle = title;
         taskFromDate = start;
         taskEndDate = end;
-        taskStatus = stat;
         taskDuration = Globals.computeDuration(start, end);
+
+        //Compute the status based on the date
+        Date date = new Date();
+        if(Globals.computeDuration(date, end) > 0)
+            taskStatus = Globals.status.ONGOING;
+        else if (Globals.computeDuration(date, end) <= 0) { //Here the date has passed the end date of the task, so it is thought of as completed
+            taskStatus = Globals.status.COMPLETED;
+        }
     }
 
     @Override
@@ -78,5 +85,10 @@ public class Task {
 
     public void setTaskDuration(int taskDuration) {
         this.taskDuration = taskDuration;
+    }
+
+    @Override
+    public int compareTo(Task o) {
+        return this.taskFromDate.compareTo(o.getTaskFromDate());
     }
 }

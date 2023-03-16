@@ -12,8 +12,6 @@ public class IMS {
     private int numOfEmployees;
 
     public IMS(int maxProjects, int maxEmployees){
-        numOfProjects = maxProjects;
-        numOfEmployees = maxEmployees;
     }
 
     private int findEmployeeByName(String empName){
@@ -65,12 +63,13 @@ public class IMS {
 
     public void insertEmployee(String id, String name, String empOfficeNo, String empOfficePhone) {
         if(myEmployees == null)
-            myEmployees = new Employee[numOfEmployees];
+            myEmployees = new Employee[Globals.maxNumOfEmployees];
 
         boolean added = false;
         for (int i = 0; i < myEmployees.length && !added; i++) {
             if (myEmployees[i] == null && findEmployeeById(id) == -1) {
                 myEmployees[i] = new Employee(id, name, empOfficeNo, empOfficePhone);
+                numOfEmployees++;
                 added = true;
             }
         }
@@ -82,13 +81,14 @@ public class IMS {
 
     public void insertProject(String name, double budget){
         if(myProjects == null)
-            myProjects = new Project[numOfProjects];
+            myProjects = new Project[Globals.maxNumOfProjects];
 
         boolean added = false;
         for (int i = 0; i < myProjects.length && !added; i++) {
             if (myProjects[i] == null) {
                 myProjects[i] = new Project(name, budget);
-                myProjects[i].setProjectID(i);
+                myProjects[i].setProjectID(numOfProjects);
+                numOfProjects++;
                 added = true;
             }
         }
@@ -167,7 +167,7 @@ public class IMS {
         }
 
         myEmployees[index] = null;
-
+        numOfEmployees--;
     }
 
     public void deleteProject(int projID){
@@ -179,6 +179,7 @@ public class IMS {
         }
 
         myProjects[index] = null;
+        numOfProjects--;
     }
 
     public void deleteTask(String taskID){
@@ -213,7 +214,7 @@ public class IMS {
     }
 
     public void assignManagerPosition(String empID) {
-        int index = 0;
+        int index;
 
         index = findEmployeeById(empID);
 
@@ -222,11 +223,28 @@ public class IMS {
             return;
         }
 
+        if(hasManager()){
+            System.out.println("Only 1 manager can exist");
+            return;
+        }
+
         Employee employee = myEmployees[index];
         //create the new manager instance
         Manager manager = new Manager(employee.getEmpID(), employee.getEmpName(), employee.getEmpOfficeNo(), employee.getEmpOfficePhone());
         //update the old index to manager
         myEmployees[index] = manager;
+    }
+
+    /**
+     * Check if the IMS already has a manager
+     * @return true if it does, false if it doesn't
+     */
+    boolean hasManager(){
+        for(int i=0; i<myEmployees.length; i++){
+            if(myEmployees[i] != null && myEmployees[i] instanceof Manager)
+                return true;
+        }
+        return false;
     }
 
     public void assignEmpToProject (String empId, int projId){

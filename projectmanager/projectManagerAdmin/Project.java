@@ -3,6 +3,7 @@ package projectmanager.projectManagerAdmin;
 import utils.Globals;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 
 import static utils.Globals.maxProjectsPerEmployee;
@@ -21,6 +22,9 @@ public class Project {
     Project(String name, double budget){
         projectName = name;
         projectBudget = budget;
+
+        //Project without tasks is pending
+        projectStatus = Globals.status.PENDING;
     }
 
     @Override
@@ -61,6 +65,38 @@ public class Project {
         return -1;
     }
 
+    private void updateTaskIds(){
+        //Making comparator to sort tasks based on start date
+        Comparator<Task> taskComparator = (task1, task2) -> {
+            if (task1 == null && task2 == null) {
+                return 0;
+            }
+            if (task1 == null) {
+                return 1;
+            }
+            if (task2 == null) {
+                return -1;
+            }
+            return task1.compareTo(task2);
+        };
+
+        // Sort tasks based on start date using the custom comparator
+        Arrays.sort(projectTasks, taskComparator);
+
+        // Update task ids to match their index in the sorted array
+        // Also update their status
+        for (int i = 0; i < projectTasks.length; i++) {
+            if (projectTasks[i] != null) {
+                if(i == 0)
+                    projectTasks[i].setTaskStatus(Globals.status.ONGOING);
+                else
+                    projectTasks[i].setTaskStatus(Globals.status.PENDING);
+
+                projectTasks[i].setTaskID(projectID+"."+i);
+            }
+        }
+    }
+
     public void insertTask(String taskTitle, Date fromDate, Date toDate, Globals.status taskStatus){
         //if there are no tasks we occupy 5 new places
         if(projectTasks == null)
@@ -69,7 +105,8 @@ public class Project {
         boolean added = false;
         for (int i = 0; i < projectTasks.length && !added; i++) {
             if (projectTasks[i] == null) {
-                projectTasks[i] = new Task(projectID+"."+i, taskTitle, fromDate, toDate, taskStatus);
+                projectTasks[i] = new Task(projectID+"."+numOfTasks++, taskTitle, fromDate, toDate, taskStatus);
+                updateTaskIds(); //Sort and update task ids
                 added = true;
                 updateProjectStatus();
             }
@@ -84,6 +121,8 @@ public class Project {
         if (taskIdx >= 0 && taskIdx < projectTasks.length && projectTasks[taskIdx] != null) {
             projectTasks[taskIdx] = null;
             System.out.println("Task removed from index " + taskIdx);
+            numOfTasks--;
+            updateTaskIds(); //Sort and update task ids
             updateProjectStatus();
         } else {
             System.out.println("Invalid index or no tasks exists at the given index.");
@@ -159,12 +198,19 @@ public class Project {
     }
 
     private void computeProjectDuration(){
+        Date startDate = new Date();
+        Date endDate = new Date();
+
         for(int i=0; i < projectTasks.length; i++){
             if(projectTasks[i] != null){
-                if(projectTasks[i].getTaskDuration() > projectDuration)
-                    projectDuration = projectTasks[i].getTaskDuration();
+                if(Globals.computeDuration(startDate, projectTasks[i].getTaskFromDate()) < 0)
+                    startDate = projectTasks[i].getTaskFromDate();
+                if(Globals.computeDuration(endDate, projectTasks[i].getTaskEndDate()) > 0)
+                    endDate = projectTasks[i].getTaskEndDate();
             }
         }
+
+        projectDuration = Globals.computeDuration(startDate, endDate);
     }
 
     public String displayTasks(){
