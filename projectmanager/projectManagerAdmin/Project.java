@@ -32,9 +32,21 @@ public class Project {
                 "projectBudget=" + projectBudget + "\t"+
                 "projectDuration=" + projectDuration + "\t"+
                 "projectStatus=" + projectStatus + "\t"+
-                "projectTasks=" + Arrays.toString(projectTasks) + "\t"+
+                "projectTasks=" + getProjectTasksOnString() + "\t"+
                 "numOfTasks=" + numOfTasks + "\t"+
                 '}';
+    }
+
+    private String getProjectTasksOnString(){
+        String sumString = "";
+
+        if(projectTasks != null)
+            for(int i=0; i<projectTasks.length; i++){
+                if(projectTasks[i] != null)
+                    sumString += projectTasks[i].toString();
+            }
+
+        return sumString;
     }
 
     protected int findTaskById(String tID){
@@ -147,8 +159,6 @@ public class Project {
     }
 
     private void computeProjectDuration(){
-        int projectDuration = 0;
-
         for(int i=0; i < projectTasks.length; i++){
             if(projectTasks[i] != null){
                 if(projectTasks[i].getTaskDuration() > projectDuration)

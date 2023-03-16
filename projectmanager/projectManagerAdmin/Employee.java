@@ -1,6 +1,5 @@
 package projectmanager.projectManagerAdmin;
 
-import java.util.Arrays;
 import java.util.Date;
 
 import static utils.Globals.maxProjectsPerEmployee;
@@ -35,9 +34,21 @@ public class Employee {
                 "empOfficeNo='" + empOfficeNo + '\'' + "\t"+
                 "empOfficePhone='" + empOfficePhone + '\'' + "\t"+
                 "HireDate=" + HireDate + "\t"+
-                "workingOn=" + Arrays.toString(workingOn) + "\t"+
+                "workingOn=" + getWorkingOnString() + "\t"+
                 "numOfProjects=" + numOfProjects + "\t"+
                 '}';
+    }
+
+    private String getWorkingOnString(){
+        String sumString = "";
+
+        if(workingOn != null)
+            for(int i=0; i<workingOn.length; i++){
+                if(workingOn[i] != null)
+                    sumString += workingOn[i].toString();
+            }
+
+        return sumString;
     }
 
     protected void assignProject(Project proj){
@@ -49,6 +60,7 @@ public class Employee {
         for (int i = 0; i < workingOn.length && !added; i++) {
             if (workingOn[i] == null) {
                 workingOn[i] = proj;
+                numOfProjects++;
                 added = true;
             }
         }
@@ -64,6 +76,7 @@ public class Employee {
             if(projIdx == workingOn[i].getProjectID()){
                 workingOn[i] = null;
                 removed = true;
+                numOfProjects--;
                 break;
             }
         }
