@@ -69,7 +69,7 @@ public class IMS {
 
         boolean added = false;
         for (int i = 0; i < myEmployees.length && !added; i++) {
-            if (myEmployees[i] == null) {
+            if (myEmployees[i] == null && findEmployeeById(id) == -1) {
                 myEmployees[i] = new Employee(id, name, empOfficeNo, empOfficePhone);
                 added = true;
             }
