@@ -16,6 +16,7 @@ public class Employee {
     public Employee(String empID, String empName) {
         this.empID = empID;
         this.empName = empName;
+        HireDate = new Date();
     }
 
     Employee(String id, String name, String empOfficeNo, String empOfficePhone){
@@ -34,9 +35,8 @@ public class Employee {
                 "empOfficeNo='" + empOfficeNo + '\'' + "\t"+
                 "empOfficePhone='" + empOfficePhone + '\'' + "\t"+
                 "HireDate=" + HireDate + "\t"+
-                "workingOn=" + getWorkingOnString() + "\t"+
                 "numOfProjects=" + numOfProjects + "\t"+
-                '}';
+                "workingOn=" + getWorkingOnString() + "}\t"+ "\n";
     }
 
     private String getWorkingOnString(){
@@ -45,7 +45,7 @@ public class Employee {
         if(workingOn != null)
             for(int i=0; i<workingOn.length; i++){
                 if(workingOn[i] != null)
-                    sumString += workingOn[i].toString();
+                    sumString += "\n" + workingOn[i].toString();
             }
 
         return sumString;

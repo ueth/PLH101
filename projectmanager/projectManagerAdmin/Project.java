@@ -2,6 +2,7 @@ package projectmanager.projectManagerAdmin;
 
 import utils.Globals;
 
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
@@ -30,15 +31,13 @@ public class Project {
     @Override
     public String toString() {
         return "Project{" +
-                "numOfProjects=" + numOfProjects + "\t"+
                 "projectID=" + projectID + "\t"+
                 "projectName='" + projectName + '\'' + "\t"+
                 "projectBudget=" + projectBudget + "\t"+
                 "projectDuration=" + projectDuration + "\t"+
                 "projectStatus=" + projectStatus + "\t"+
-                "projectTasks=" + getProjectTasksOnString() + "\t"+
                 "numOfTasks=" + numOfTasks + "\t"+
-                '}';
+                "projectTasks=" + getProjectTasksOnString() + "}\t"+  "\n";
     }
 
     private String getProjectTasksOnString(){
@@ -47,7 +46,7 @@ public class Project {
         if(projectTasks != null)
             for(int i=0; i<projectTasks.length; i++){
                 if(projectTasks[i] != null)
-                    sumString += projectTasks[i].toString();
+                    sumString += "\n" + projectTasks[i].toString();
             }
 
         return sumString;
@@ -173,7 +172,7 @@ public class Project {
 
         //if there are no tasks the project is completed
         if(projectTasks == null) {
-            projectStatus = Globals.status.COMPLETED;
+            projectStatus = Globals.status.PENDING;
         }
         else{
             for(int i=0; i < projectTasks.length; i++){
@@ -198,14 +197,24 @@ public class Project {
     }
 
     private void computeProjectDuration(){
-        Date startDate = new Date();
-        Date endDate = new Date();
+        Date startDate = null;
+        try {
+            startDate = Globals.dateFormatter.parse("01/10/3000");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        Date endDate = null;
+        try {
+            endDate = Globals.dateFormatter.parse("01/10/2000");
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
 
         for(int i=0; i < projectTasks.length; i++){
             if(projectTasks[i] != null){
-                if(Globals.computeDuration(startDate, projectTasks[i].getTaskFromDate()) < 0)
+                if(!Globals.validateDates(startDate, projectTasks[i].getTaskFromDate()))//Keep the earliest date
                     startDate = projectTasks[i].getTaskFromDate();
-                if(Globals.computeDuration(endDate, projectTasks[i].getTaskEndDate()) > 0)
+                if(Globals.validateDates(endDate, projectTasks[i].getTaskEndDate()))//Keep the latest date
                     endDate = projectTasks[i].getTaskEndDate();
             }
         }

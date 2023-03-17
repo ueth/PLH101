@@ -68,7 +68,10 @@ public class IMS {
         boolean added = false;
         for (int i = 0; i < myEmployees.length && !added; i++) {
             if (myEmployees[i] == null && findEmployeeById(id) == -1) {
-                myEmployees[i] = new Employee(id, name, empOfficeNo, empOfficePhone);
+                if(empOfficeNo == null && empOfficeNo == null)
+                    myEmployees[i] = new Employee(id, name);
+                else
+                    myEmployees[i] = new Employee(id, name, empOfficeNo, empOfficePhone);
                 numOfEmployees++;
                 added = true;
             }
@@ -303,7 +306,7 @@ public class IMS {
         String sumToStirng = "";
         for(int i=0; i<myProjects.length; i++){
             if(myProjects[i] != null)
-                sumToStirng += myProjects[i].toString() + "\n";
+                sumToStirng += myProjects[i].toString();
         }
         return sumToStirng;
     }
