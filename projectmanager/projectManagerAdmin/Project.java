@@ -64,6 +64,36 @@ public class Project {
         return -1;
     }
 
+    private void updateTaskArray(){
+        Task temp;
+
+        // bubble sort algorithm
+        for(int i=0; i < projectTasks.length-1; i++){
+            for(int j=0; j < projectTasks.length-i-1; j++){
+                if(projectTasks[j] == null || projectTasks[j+1] == null) continue;
+                if(!Globals.validateDates(projectTasks[j].getTaskFromDate(), projectTasks[j+1].getTaskFromDate())){
+                    // swap arr[j] and arr[j+1]
+                    temp = projectTasks[j];
+                    projectTasks[j] = projectTasks[j+1];
+                    projectTasks[j+1] = temp;
+                }
+            }
+        }
+
+        // Update task ids to match their index in the sorted array
+        // Also update their status
+        for (int i = 0; i < projectTasks.length; i++) {
+            if (projectTasks[i] != null) {
+                if(i == 0)
+                    projectTasks[i].setTaskStatus(Globals.status.ONGOING);
+                else
+                    projectTasks[i].setTaskStatus(Globals.status.PENDING);
+
+                projectTasks[i].setTaskID(projectID+"."+i);
+            }
+        }
+    }
+
     private void updateTaskIds(){
         //Making comparator to sort tasks based on start date
         Comparator<Task> taskComparator = (task1, task2) -> {
@@ -105,7 +135,7 @@ public class Project {
         for (int i = 0; i < projectTasks.length && !added; i++) {
             if (projectTasks[i] == null) {
                 projectTasks[i] = new Task(projectID+"."+numOfTasks++, taskTitle, fromDate, toDate, taskStatus);
-                updateTaskIds(); //Sort and update task ids
+                updateTaskArray(); //Sort and update task ids
                 added = true;
                 updateProjectStatus();
             }
@@ -121,7 +151,7 @@ public class Project {
             projectTasks[taskIdx] = null;
             System.out.println("Task removed from index " + taskIdx);
             numOfTasks--;
-            updateTaskIds(); //Sort and update task ids
+            updateTaskArray(); //Sort and update task ids
             updateProjectStatus();
         } else {
             System.out.println("Invalid index or no tasks exists at the given index.");
@@ -160,6 +190,7 @@ public class Project {
             taskToUpdate.setTaskStatus(stat);
         }
 
+        updateTaskArray();
         updateProjectStatus();
     }
 
