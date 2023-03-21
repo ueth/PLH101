@@ -4,7 +4,7 @@ import utils.Globals;
 
 import java.util.Date;
 
-public class Task implements Comparable<Task>{
+public class Task{
     private String taskID, taskTitle;
     private Globals.status taskStatus;
     private Date taskFromDate;
@@ -85,10 +85,5 @@ public class Task implements Comparable<Task>{
 
     public void setTaskDuration(int taskDuration) {
         this.taskDuration = taskDuration;
-    }
-
-    @Override
-    public int compareTo(Task o) {
-        return this.taskFromDate.compareTo(o.getTaskFromDate());
     }
 }

@@ -2,12 +2,8 @@ package projectmanager.projectManagerAdmin;
 
 import utils.Globals;
 
-import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Date;
 
-import static utils.Globals.maxProjectsPerEmployee;
 import static utils.Globals.maxTasksPerProject;
 
 public class Project {
@@ -19,6 +15,8 @@ public class Project {
     private Globals.status projectStatus;
     private Task [] projectTasks;
     private int numOfTasks;
+    private Date startDate;
+    private Date endDate;
 
     Project(String name, double budget){
         projectName = name;
@@ -68,10 +66,18 @@ public class Project {
         Task temp;
 
         // bubble sort algorithm
+        //Sorting projectTasks based on their starting Date from smallest to largest
         for(int i=0; i < projectTasks.length-1; i++){
             for(int j=0; j < projectTasks.length-i-1; j++){
-                if(projectTasks[j] == null || projectTasks[j+1] == null) continue;
-                if(!Globals.validateDates(projectTasks[j].getTaskFromDate(), projectTasks[j+1].getTaskFromDate())){
+                if(projectTasks[j] == null){
+                    temp = projectTasks[j];
+                    projectTasks[j] = projectTasks[j+1];
+                    projectTasks[j+1] = temp;
+                }
+                else if(projectTasks[j+1] == null){
+
+                }
+                else if(!Globals.validateDates(projectTasks[j].getTaskFromDate(), projectTasks[j+1].getTaskFromDate())){
                     // swap arr[j] and arr[j+1]
                     temp = projectTasks[j];
                     projectTasks[j] = projectTasks[j+1];
@@ -92,38 +98,9 @@ public class Project {
                 projectTasks[i].setTaskID(projectID+"."+i);
             }
         }
-    }
 
-    private void updateTaskIds(){
-        //Making comparator to sort tasks based on start date
-        Comparator<Task> taskComparator = (task1, task2) -> {
-            if (task1 == null && task2 == null) {
-                return 0;
-            }
-            if (task1 == null) {
-                return 1;
-            }
-            if (task2 == null) {
-                return -1;
-            }
-            return task1.compareTo(task2);
-        };
-
-        // Sort tasks based on start date using the custom comparator
-        Arrays.sort(projectTasks, taskComparator);
-
-        // Update task ids to match their index in the sorted array
-        // Also update their status
-        for (int i = 0; i < projectTasks.length; i++) {
-            if (projectTasks[i] != null) {
-                if(i == 0)
-                    projectTasks[i].setTaskStatus(Globals.status.ONGOING);
-                else
-                    projectTasks[i].setTaskStatus(Globals.status.PENDING);
-
-                projectTasks[i].setTaskID(projectID+"."+i);
-            }
-        }
+        //Setting projects start date (earliest date)
+        //startDate = projectTasks[0].getTaskFromDate();
     }
 
     public void insertTask(String taskTitle, Date fromDate, Date toDate, Globals.status taskStatus){
@@ -228,29 +205,29 @@ public class Project {
     }
 
     private void computeProjectDuration(){
-        Date startDate = null;
-        try {
-            startDate = Globals.dateFormatter.parse("01/10/3000");
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        Date endDate = null;
-        try {
-            endDate = Globals.dateFormatter.parse("01/10/2000");
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
+        //Reset start and end date of the project to recalculate them
+        startDate = null;
+        endDate = null;
 
-        for(int i=0; i < projectTasks.length; i++){
-            if(projectTasks[i] != null){
-                if(!Globals.validateDates(startDate, projectTasks[i].getTaskFromDate()))//Keep the earliest date
-                    startDate = projectTasks[i].getTaskFromDate();
-                if(Globals.validateDates(endDate, projectTasks[i].getTaskEndDate()))//Keep the latest date
+        for (int i = 0; i < projectTasks.length; i++) {
+            if(projectTasks[i] != null) {
+                if (endDate == null)
                     endDate = projectTasks[i].getTaskEndDate();
+                else if (Globals.validateDates(endDate, projectTasks[i].getTaskEndDate())) { //Keep the latest date
+                    endDate = projectTasks[i].getTaskEndDate();
+                }
+                if (startDate == null)
+                    startDate = projectTasks[i].getTaskFromDate();
+                else if (!Globals.validateDates(startDate, projectTasks[i].getTaskFromDate())) { //Keep the earliest date
+                    startDate = projectTasks[i].getTaskFromDate();
+                }
             }
         }
 
-        projectDuration = Globals.computeDuration(startDate, endDate);
+        if(startDate == null || endDate == null)
+            projectDuration = 0;
+        else
+            projectDuration = Globals.computeDuration(startDate, endDate);
     }
 
     public String displayTasks(){
