@@ -7,8 +7,8 @@ public abstract class VM {
     private int cpuCores;
     private int ram;
     private OsType osType;
-    private int alocCpuCores;
-    private int alocRam;
+    private int alocCpuCores = 0;
+    private int alocRam = 0;
 
     public VM(int vmId, int cpuCores, int ram, OsType osType) {
         this.vmId = vmId;

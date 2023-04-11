@@ -4,7 +4,7 @@ import project2.virtualMachines.vmExtras.OsType;
 
 public class VmNetworkedGPU extends VmNetworked{
     int GPU;
-    int alocGPU;
+    int alocGPU = 0;
 
     public VmNetworkedGPU(int vmId, int cpuCores, int ram, OsType osType, int ssd, int bandwidth, int GPU) {
         super(vmId, cpuCores, ram, osType, ssd, bandwidth);
@@ -66,11 +66,11 @@ public class VmNetworkedGPU extends VmNetworked{
         double vmBandwidth = getBandwidth();
         double vmGPU = getGPU();
 
-        vmload = ((( allocatedCores+cpuCores)/ vmCores )
+        vmload = 100*((( allocatedCores+cpuCores)/ vmCores )
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
                 + ((allocatedBandwidth+bandwidth)/vmBandwidth)
-                + ((allocatedGPU+gpu)/vmGPU))/(5);
+                + ((allocatedGPU+gpu)/vmGPU))/(5^3);
 
         return vmload;
     }

@@ -4,7 +4,7 @@ import project2.virtualMachines.vmExtras.OsType;
 
 public class VmNetworked extends PlainVM{
     private int bandwidth;
-    private int alocBandwidth;
+    private int alocBandwidth = 0;
 
     public VmNetworked(int vmId, int cpuCores, int ram, OsType osType, int ssd, int bandwidth) {
         super(vmId, cpuCores, ram, osType, ssd);
@@ -62,10 +62,10 @@ public class VmNetworked extends PlainVM{
         double vmSsd = getSsd();
         double vmBandwidth = getBandwidth();
 
-        vmload = ((( allocatedCores+cpuCores)/ vmCores )
+        vmload = 100*((( allocatedCores+cpuCores)/ vmCores )
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
-                + ((allocatedBandwidth+bandwidth)/vmBandwidth))/(4);
+                + ((allocatedBandwidth+bandwidth)/vmBandwidth))/(4^3);
 
         return vmload;
     }

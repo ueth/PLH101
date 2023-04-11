@@ -4,7 +4,7 @@ import project2.virtualMachines.vmExtras.OsType;
 
 public class VmGPU extends PlainVM{
     private int GPU;
-    private int alocGPU;
+    private int alocGPU = 0;
 
     public VmGPU(int vmId, int cpuCores, int ram, OsType osType, int ssd, int GPU) {
         super(vmId, cpuCores, ram, osType, ssd);
@@ -61,10 +61,10 @@ public class VmGPU extends PlainVM{
         double vmSsd = getSsd();
         double vmGPU = getGPU();
 
-        vmload = ((( allocatedCores+cpuCores)/ vmCores )
+        vmload = 100*((( allocatedCores+cpuCores)/ vmCores )
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
-                + ((allocatedGPU+gpu)/vmGPU))/(4);
+                + ((allocatedGPU+gpu)/vmGPU))/(4^3);
 
         return vmload;
     }

@@ -57,9 +57,11 @@ public class PlainVM extends VM{
         double vmRam = getRam();
         double vmSsd = getSsd();
 
-        vmload = ((( allocatedCores+cpuCores)/ vmCores )
+        vmload = 100*(
+                  ((allocatedCores+cpuCores)/vmCores)
                 + ((allocatedRam+ram)/vmRam)
-                + ((allocatedSsd+ssd)/vmSsd))/(3);
+                + ((allocatedSsd+ssd)/vmSsd)
+                     )/(4^3);
 
         return vmload;
     }
