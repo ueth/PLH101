@@ -1,56 +1,117 @@
 package project2;
 
+import project2.loader.ProgramLoader;
+import project2.loader.VMLoader;
+import project2.program.Program;
+import project2.program.ProgramHandler;
+import project2.utils.GlobalProgramHandler;
+import project2.utils.GlobalVMHandler;
+import project2.utils.Globals;
 import project2.virtualMachines.vmExtras.OsType;
 import project2.vmHandler.VMHandler;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class CLI {
-    private static VMHandler vmh = new VMHandler();
+    private static VMHandler vmh;
+    private static ProgramHandler ph;
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String [] args){
+        vmh = GlobalVMHandler.createVMHandler();
+        ph = GlobalProgramHandler.createProgramHandler();
+        VMLoader.loadVMS();
+        ProgramLoader.loadPrograms();
         operateCLI();
     }
 
     private static void operateCLI(){
         int choice = 0;
 
-        System.out.println("___________Command Line Interface___________");
+        //System.out.println("___________Command Line Interface___________");
+        if(!Globals.hasVMFile)
+            while (choice != 10){
+                printMenuVM();
 
-        while (choice != 5){
-            printMenu();
+                //Get user's input
+                choice = scanner.nextInt();
 
-            //Get user's input
-            choice = scanner.nextInt();
+                switch (choice){
+                    case 1:
+                        createVM();
+                        break;
+                    case 2:
+                        delete();
+                        break;
+                    case 3:
+                        update();
+                        break;
+                    case 4:
+                        printVMs();
+                        break;
+                }
+            }
 
-            switch (choice){
-                case 1:
-                    create();
-                    break;
-                case 2:
-                    delete();
-                    break;
-                case 3:
-                    update();
-                    break;
-                case 4:
-                    printVMs();
-                    break;
+        choice = 0;
+
+        if(!Globals.hasProgramFile)
+            while(choice != 10){
+                printMenuProgram();
+
+                choice = scanner.nextInt();
+
+                switch (choice){
+                    case 1:
+                        createProgram();
+                        break;
+                    case 2:
+                        ph.printProgramStats();
+                        break;
+                }
+            }
+
+        //push programs in queue
+        ph.pushProgramsInQueue();
+
+        while(true){
+            //First check if a running program has finished
+            for(Program finishedProgram : GlobalProgramHandler.getProgramHandler().getProgramArrayList()){
+                //If finished, the program will give back the resources to the VM
+                if(finishedProgram.hasVM()) {
+                    //System.out.println("Program's VM is: " + finishedProgram.getVm().getVmId());
+                    finishedProgram.checkIfFinished();
+                }
+            }
+
+            if(ph.areAllProgramsFinished()){
+                System.out.println("Queue is empty, all programs are either finished or failed");
+                break;
+            }
+            else if(!ph.getProgramQueue().isEmpty()){
+                Program program = ph.getProgramQueue().pop();
+                vmh.assignProgramToVM(program);
             }
         }
     }
 
-    private static void printMenu(){
-        System.out.println("Create VM - 1");
+    private static void printMenuVM(){
+        System.out.println("\nCreate VM - 1");
         System.out.println("Delete VM - 2");
         System.out.println("Update VM - 3");
         System.out.println("Print Report - 4");
-        System.out.println("Exit - 5");
+        System.out.println("Exit - 10");
         System.out.print("Please enter your choice: ");
     }
 
-    private static void create(){
+    private static void printMenuProgram(){
+        System.out.println("\nCreate Program - 1");
+        System.out.println("Print Programs - 2");
+        System.out.println("Exit - 10");
+        System.out.print("Please enter your choice: ");
+    }
+
+    private static void createVM(){
         int cpuCores = 0;
         int ram = 0;
         String OSs;
@@ -135,6 +196,43 @@ public class CLI {
         GPU = scanner.nextInt();
 
         vmh.updateVM(vmId, cpuCores, ram, OS, ssd, bandwidth, GPU);
+    }
+
+    /**
+     * Create and add a new program
+     */
+    private static void createProgram(){
+        if(vmh.getTotalCores() == 0){
+            System.out.println("There are no available VMs at the moment, please create at least one new VM before creating a program");
+            return;
+        }
+        int cores;
+        int ram;
+        int ssd;
+        int gpu;
+        int bandwidth;
+        int expectedTime;
+
+        System.out.println("Enter Cores");
+        cores = scanner.nextInt();
+
+        System.out.println("Enter Ram");
+        ram = scanner.nextInt();
+
+        System.out.println("Enter SSD");
+        ssd = scanner.nextInt();
+
+        System.out.println("Enter GPU");
+        gpu = scanner.nextInt();
+
+        System.out.println("Enter Bandwidth");
+        bandwidth = scanner.nextInt();
+
+        System.out.println("Enter expected time");
+        expectedTime = scanner.nextInt();
+
+        ph.createProgram(cores, ram, ssd, gpu, bandwidth, expectedTime);
+
     }
 
     private static void printVMs(){

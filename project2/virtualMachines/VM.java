@@ -7,12 +7,36 @@ public abstract class VM {
     private int cpuCores;
     private int ram;
     private OsType osType;
+    private int alocCpuCores;
+    private int alocRam;
 
     public VM(int vmId, int cpuCores, int ram, OsType osType) {
         this.vmId = vmId;
         this.cpuCores = cpuCores;
         this.ram = ram;
         this.osType = osType;
+    }
+
+    public abstract void printStats();
+    public abstract double calculateCurrentVMLoad();
+    public abstract double calculateNewVMLoad(double cpuCores, double ram, double ssd, double gpu, double bandwidth);
+    public abstract double calculateNewVMLoad(int cpuCores, int ram, int ssd, int gpuOrBandwidth);
+    public abstract double calculateNewVMLoad(int cpuCores, int ram, int ssd);
+    public abstract void alocateResources(int cpuCores, int ram, int ssd, int gpu, int bandwidth);
+    public int getAlocCpuCores() {
+        return alocCpuCores;
+    }
+
+    public void setAlocCpuCores(int alocCpuCores) {
+        this.alocCpuCores = alocCpuCores;
+    }
+
+    public int getAlocRam() {
+        return alocRam;
+    }
+
+    public void setAlocRam(int alocRam) {
+        this.alocRam = alocRam;
     }
 
     public int getVmId() {

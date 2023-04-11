@@ -1,11 +1,16 @@
 package project2.vmHandler;
 
+import project2.program.Program;
+import project2.utils.GlobalProgramHandler;
 import project2.virtualMachines.*;
 import project2.virtualMachines.vmExtras.CreateVM;
 import project2.virtualMachines.vmExtras.OsType;
 
+import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 public class VMHandler {
     private ComputerCluster cc = new ComputerCluster();
@@ -40,44 +45,34 @@ public class VMHandler {
      * @return false if there are no resources or if the vmId doesn't match with any of the existing VMs' ids
      */
     public boolean updateVM(int vmId, int cpuCores, int ram, OsType OS, int ssd, int bandwidth, int GPU){
-        boolean found = false;
-
         //Check if we have the resources
         if(!hasEnoughResources(cpuCores, ram, ssd, bandwidth, GPU)) {
             System.out.println("Computer Cluster has run out of resources.");
             return false;
         }
 
-        //Iterate through all vms to find the one with the matching id
-        for(VM vm : vmArrayList){
-            if(vm.getVmId() == vmId){
-                //Update Cluster's resources
-                updateCluster(cpuCores, ram, ssd, bandwidth, GPU);
+        VM vm = getVmById(vmId);
 
-                vm.setCpuCores(cpuCores);
-                vm.setOsType(OS);
-                vm.setRam(ram);
-                ((PlainVM) vm).setSsd(ssd);
+        if(vm == null)
+            return false;
 
-                if (vm instanceof VmNetworkedGPU){
-                    ((VmNetworkedGPU) vm).setBandwidth(bandwidth);
-                    ((VmNetworkedGPU) vm).setGPU(GPU);
-                }
-                else if(vm instanceof VmNetworked)
-                    ((VmNetworked) vm).setBandwidth(bandwidth);
-                else if (vm instanceof VmGPU)
-                    ((VmGPU) vm).setGPU(GPU);
+        updateCluster(cpuCores, ram, ssd, bandwidth, GPU);
 
+        vm.setCpuCores(cpuCores);
+        vm.setOsType(OS);
+        vm.setRam(ram);
+        ((PlainVM) vm).setSsd(ssd);
 
-                found = true;
-                break; //If found, break out of loop
-            }
+        if (vm instanceof VmNetworkedGPU){
+            ((VmNetworkedGPU) vm).setBandwidth(bandwidth);
+            ((VmNetworkedGPU) vm).setGPU(GPU);
         }
+        else if(vm instanceof VmNetworked)
+            ((VmNetworked) vm).setBandwidth(bandwidth);
+        else if (vm instanceof VmGPU)
+            ((VmGPU) vm).setGPU(GPU);
 
-        if(!found)
-            System.out.println("This id doesn't match with any of the VMs.");
-
-        return found;
+        return true;
     }
 
     /**
@@ -93,6 +88,7 @@ public class VMHandler {
         int GPU = 0;
         int index = 0;
 
+        //Here we use loop instead of getVmById to keep track of the index
         for(VM vm : vmArrayList){
             if(vm.getVmId() == vmId){
                 cpuCores = vm.getCpuCores();
@@ -131,61 +127,26 @@ public class VMHandler {
      * Prints VM resources
      */
     public void printVMReport(int vmId){
-        boolean found;
+        //Check if the list is empty first
+        if(vmArrayList.isEmpty()){
+            System.out.println("There are no active VMs currently.");
+            return;
+        }
 
         //If vmId = 0 print all vm resources that are in the list
         if(vmId == 0) {
-            for (VM vm : vmArrayList) {
-                System.out.println("=================================================");
-                System.out.println("ID: " + vm.getVmId());
-                System.out.println("CPU Cores: " + vm.getCpuCores());
-                System.out.println("OS: " + vm.getOsType().getName());
-                System.out.println("Ram: " + vm.getRam());
-                System.out.println("SSD: " + ((PlainVM) vm).getSsd());
-
-                if (vm instanceof VmNetworkedGPU) {
-                    System.out.println("Bandwidth: " + ((VmNetworkedGPU) vm).getBandwidth());
-                    System.out.println("GPU: " + ((VmNetworkedGPU) vm).getGPU());
-                }
-                else if (vm instanceof VmNetworked)
-                    System.out.println("Bandwidth: " + ((VmNetworked) vm).getBandwidth());
-                else if (vm instanceof VmGPU)
-                    System.out.println("GPU: " + ((VmGPU) vm).getGPU());
-
-                //Print separator
-                System.out.println("=================================================");
-            }
-            found = true;
+            for (VM vm : vmArrayList)
+                vm.printStats();//Print vm stats
         }
         else {
-            for(VM vm : vmArrayList){
-                if(vm.getVmId() == vmId){
-                    System.out.println("=================================================");
-                    System.out.println("ID: " + vm.getVmId());
-                    System.out.println("CPU Cores: " + vm.getCpuCores());
-                    System.out.println("OS: " + vm.getOsType().getName());
-                    System.out.println("Ram: " + vm.getRam());
-                    System.out.println("SSD: " + ((PlainVM) vm).getSsd());
+            VM vm = getVmById(vmId);
 
-                    if (vm instanceof VmNetworkedGPU) {
-                        System.out.println("Bandwidth: " + ((VmNetworkedGPU) vm).getBandwidth());
-                        System.out.println("GPU: " + ((VmNetworkedGPU) vm).getGPU());
-                    }
-                    else if (vm instanceof VmNetworked)
-                        System.out.println("Bandwidth: " + ((VmNetworked) vm).getBandwidth());
-                    else if (vm instanceof VmGPU)
-                        System.out.println("GPU: " + ((VmGPU) vm).getGPU());
+            if(vm == null)
+                return;
 
-                    System.out.println("=================================================");
-                    found = true;
-                    break;
-                }
-            }
-            found = false;
+            //Print vm Stats
+            vm.printStats();
         }
-
-        if(!found)
-            System.out.println("This id doesn't match with any of the VMs.");
     }
 
     /**
@@ -217,5 +178,136 @@ public class VMHandler {
         cc.setEthernet(cc.getEthernet() - bandwidth);
         cc.setRam(cc.getRam() - ram);
         cc.setSsd(cc.getSsd() - ssd);
+    }
+
+    /**
+     * Find any vm
+     * @return the vm asked or null if the vm was not found
+     */
+    public VM getVmById(int vmId){
+        for(VM vm : vmArrayList){
+            if(vm.getVmId() == vmId)
+                return vm;
+        }
+
+        System.out.println("Did not find VM with the above id");
+        return null;
+    }
+
+    public void assignProgramToVM(Program program){
+        boolean found = false;
+        //In order to have something to compare to, we assign the first one to vmHolder
+        VM vmHolder = vmArrayList.get(0);
+
+        //iterate through all vms to find the best suited
+        for(VM vm : vmArrayList){
+            System.out.println("STATS " + vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()));
+
+            if(vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()) <= 100
+                && (vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()) <=
+                vmHolder.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth())))
+            {
+                vmHolder = vm;
+                found = true;
+            }
+        }
+
+        if(!found) {
+            program.incFailNum(); //All happens in here, even new push
+            sleep(program.getpID());
+        }
+        //Else if found, we allocate vmHolder's resources for the program and do not push it again in queue
+        else /*if(program.getStartExecTime() < program.getExpectedTime())*/{
+            System.out.println("Program " + program.getpID() + " assigned to vm");
+            long startTime = System.currentTimeMillis()/1000;
+            program.setStartExecTime(startTime);
+            program.setVm(vmHolder);
+            //GlobalProgramHandler.getProgramHandler().getProgramQueue().push(program);
+            vmHolder.alocateResources(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth());
+        }
+    }
+
+    /**
+     * System sleep for 2 seconds
+     */
+    public void sleep(int id){
+        long timeToSleep = 2L;
+        TimeUnit time = TimeUnit.SECONDS;
+
+        try {
+            System.out.println("No VM found with resources for program with id: " + id + ", Sleep for 2 seconds...");
+            time.sleep(timeToSleep);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     *
+     * @return The sum of all cores of vms
+     */
+    public int getTotalCores(){
+        int total = 0;
+
+        for(VM vm : vmArrayList)
+            total += vm.getCpuCores();
+
+        return total;
+    }
+
+    /**
+     *
+     * @return The sum of all ram of vms
+     */
+    public int getTotalRam(){
+        int total = 0;
+
+        for(VM vm : vmArrayList)
+            total += vm.getRam();
+
+        return total;
+    }
+
+    /**
+     *
+     * @return The sum of all ssd of vms
+     */
+    public int getTotalSsd(){
+        int total = 0;
+
+        for(VM vm : vmArrayList)
+            total += ((PlainVM) vm).getSsd();
+
+        return total;
+    }
+
+    /**
+     *
+     * @return The sum of all gpu of vms
+     */
+    public int getTotalGPU(){
+        int total = 0;
+
+        for(VM vm : vmArrayList)
+            total += (vm instanceof VmGPU) ? ((VmGPU) vm).getGPU() : (vm instanceof VmNetworkedGPU) ? ((VmNetworkedGPU) vm).getGPU() : 0;
+
+        return total;
+    }
+
+    /**
+     *
+     * @return The sum of all bandwidth of vms
+     */
+    public int getTotalBandwidth(){
+        int total = 0;
+
+        for(VM vm : vmArrayList)
+            total += (vm instanceof VmNetworkedGPU) ? ((VmNetworkedGPU) vm).getBandwidth() : (vm instanceof VmNetworked) ? ((VmNetworked) vm).getBandwidth() : 0;
+
+        return total;
+    }
+
+    public ArrayList<VM> getVmArrayList(){
+        return vmArrayList;
     }
 }
