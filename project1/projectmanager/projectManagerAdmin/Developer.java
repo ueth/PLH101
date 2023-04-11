@@ -1,6 +1,6 @@
-package projectmanager.projectManagerAdmin;
+package project1.projectmanager.projectManagerAdmin;
 
-import utils.Globals;
+import project1.utils.Globals;
 
 import java.util.Arrays;
 

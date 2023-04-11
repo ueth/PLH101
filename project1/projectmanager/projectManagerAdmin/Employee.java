@@ -1,8 +1,10 @@
-package projectmanager.projectManagerAdmin;
+package project1.projectmanager.projectManagerAdmin;
+
+import project1.utils.Globals;
 
 import java.util.Date;
 
-import static utils.Globals.maxProjectsPerEmployee;
+import static project1.utils.Globals.maxProjectsPerEmployee;
 
 public class Employee {
     private String empID;
@@ -34,7 +36,7 @@ public class Employee {
                 "empName='" + empName + '\'' + "\t"+
                 "empOfficeNo='" + empOfficeNo + '\'' + "\t"+
                 "empOfficePhone='" + empOfficePhone + '\'' + "\t"+
-                "HireDate=" + HireDate + "\t"+
+                "HireDate=" +Globals.dateFormatter.format(HireDate) + "\t"+
                 "numOfProjects=" + numOfProjects + "\t"+
                 "workingOn=" + getWorkingOnString() + "}\t"+ "\n";
     }
@@ -62,6 +64,11 @@ public class Employee {
                 workingOn[i] = proj;
                 numOfProjects++;
                 added = true;
+            }
+            else{
+                if(workingOn[i].getProjectID() == proj.getProjectID() ){
+                    return;
+                }
             }
         }
 

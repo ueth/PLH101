@@ -1,4 +1,4 @@
-package projectmanager.projectManagerAdmin;
+package project1.projectmanager.projectManagerAdmin;
 
 import java.util.Date;
 

@@ -1,10 +1,10 @@
-package projectmanager.projectManagerAdmin;
+package project1.projectmanager.projectManagerAdmin;
 
-import utils.Globals;
+import project1.utils.Globals;
 
 import java.util.Date;
 
-import static utils.Globals.maxTasksPerProject;
+import static project1.utils.Globals.maxTasksPerProject;
 
 public class Project {
     private int numOfProjects;
