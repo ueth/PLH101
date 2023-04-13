@@ -1,7 +1,7 @@
 package project2;
 
-import project2.loader.ProgramLoader;
-import project2.loader.VMLoader;
+import project2.loaders.ProgramLoader;
+import project2.loaders.VMLoader;
 import project2.program.Program;
 import project2.program.ProgramHandler;
 import project2.utils.GlobalProgramHandler;
@@ -10,7 +10,6 @@ import project2.utils.Globals;
 import project2.virtualMachines.vmExtras.OsType;
 import project2.vmHandler.VMHandler;
 
-import java.io.File;
 import java.util.Scanner;
 
 public class CLI {
@@ -21,70 +20,83 @@ public class CLI {
     public static void main(String [] args){
         vmh = GlobalVMHandler.createVMHandler();
         ph = GlobalProgramHandler.createProgramHandler();
+
+        //Try to load vms-programs from config files
         VMLoader.loadVMS();
         ProgramLoader.loadPrograms();
+
         operateCLI();
+        programAssignToVM();
     }
 
     private static void operateCLI(){
-        int choice = 0;
-
-        //System.out.println("___________Command Line Interface___________");
         if(!Globals.hasVMFile)
-            while (choice != 10){
-                printMenuVM();
-
-                //Get user's input
-                choice = scanner.nextInt();
-
-                switch (choice){
-                    case 1:
-                        createVM();
-                        break;
-                    case 2:
-                        delete();
-                        break;
-                    case 3:
-                        update();
-                        break;
-                    case 4:
-                        printVMs();
-                        break;
-                }
-            }
-
-        choice = 0;
+            handleVMMenu();
 
         if(!Globals.hasProgramFile)
-            while(choice != 10){
-                printMenuProgram();
+            handleProgramMenu();
+    }
 
-                choice = scanner.nextInt();
+    private static void handleVMMenu(){
+        int choice = 0;
 
-                switch (choice){
-                    case 1:
-                        createProgram();
-                        break;
-                    case 2:
-                        ph.printProgramStats();
-                        break;
-                }
+        while (choice != 10){
+            printMenuVM();
+
+            //Get user's input
+            choice = scanner.nextInt();
+
+            switch (choice){
+                case 1:
+                    createVM();
+                    break;
+                case 2:
+                    delete();
+                    break;
+                case 3:
+                    update();
+                    break;
+                case 4:
+                    printVMs();
+                    break;
             }
+        }
+    }
 
-        //push programs in queue
+    private static void handleProgramMenu(){
+        int choice = 0;
+
+        while(choice != 10){
+            printMenuProgram();
+
+            choice = scanner.nextInt();
+
+            switch (choice){
+                case 1:
+                    createProgram();
+                    break;
+                case 2:
+                    ph.printProgramStats();
+                    break;
+            }
+        }
+    }
+
+    private static void programAssignToVM(){
+        //First push programs in queue
         ph.pushProgramsInQueue();
 
         while(true){
-            //First check if a running program has finished
-            for(Program finishedProgram : GlobalProgramHandler.getProgramHandler().getProgramArrayList()){
+            //Check if a running program has finished
+            for(Program finishedProgram : GlobalProgramHandler.getProgramHandler().getProgramArrayList())
                 //If finished, the program will give back the resources to the VM
-                if(finishedProgram.hasVM()) {
-                    //System.out.println("Program's VM is: " + finishedProgram.getVm().getVmId());
+                if(finishedProgram.hasVM())
                     finishedProgram.checkIfFinished();
-                }
-            }
 
             if(ph.areAllProgramsFinished()){
+                //Print final report of programs
+                for(Program program : ph.getProgramArrayList())
+                    program.printFinalReport();
                 System.out.println("Queue is empty, all programs are either finished or failed");
                 break;
             }

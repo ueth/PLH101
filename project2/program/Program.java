@@ -9,7 +9,6 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDateTime;
 
 public class Program implements Serializable {
     private int pID;
@@ -200,23 +199,23 @@ public class Program implements Serializable {
     }
 
     public boolean hasVM(){
-        if(vm == null)
-            return false;
-        else
-            return true;
+        return vm!=null;
+    }
+
+    public void printFinalReport(){
+        System.out.println("Program: " + pID + " with VM: " + getVm().getVmId() + ", has finished in " + executionTime + " seconds.");
     }
 
     public void checkIfFinished(){
+        //Avoid checking finished programs multiple times
         if(finished == true)
             return;
 
         long currTime = System.currentTimeMillis()/1000;
         setCurExecTime(currTime);
 
-        //We do /1000 because we go from milliseconds to seconds
         if(executionTime >= expectedTime){
             finished = true;
-            System.out.println("Program: " + pID + " has finished in " + executionTime + " seconds.");
             //Reallocate resources
             getVm().alocateResources(-getCpuCores(), -getRam(), -getSsd(), -getGpu(), -getBandwidth());
         }

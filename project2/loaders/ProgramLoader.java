@@ -1,6 +1,5 @@
-package project2.loader;
+package project2.loaders;
 
-import project2.program.Program;
 import project2.utils.GlobalProgramHandler;
 import project2.utils.Globals;
 

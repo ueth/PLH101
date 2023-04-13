@@ -1,4 +1,4 @@
-package project2.loader;
+package project2.loaders;
 
 import project2.utils.GlobalVMHandler;
 import project2.utils.Globals;

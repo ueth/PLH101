@@ -1,14 +1,11 @@
 package project2.vmHandler;
 
 import project2.program.Program;
-import project2.utils.GlobalProgramHandler;
 import project2.virtualMachines.*;
 import project2.virtualMachines.vmExtras.CreateVM;
 import project2.virtualMachines.vmExtras.OsType;
 
-import java.sql.Array;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -106,7 +103,7 @@ public class VMHandler {
 
 
                 //Update Cluster's resources
-                updateCluster(cpuCores, ram, ssd, bandwidth, GPU);
+                updateCluster(-cpuCores, -ram, -ssd, -bandwidth, -GPU);
 
                 //Remove vm from the list
                 vmArrayList.remove(index);
@@ -154,7 +151,7 @@ public class VMHandler {
      * @return false if there are no significant resources in the cc
      */
     private boolean hasEnoughResources(int cpuCores, int ram, int ssd, int bandwidth, int GPU){
-        //Check if each of the following are negative, which means that we ask for more
+        //Check if each of the following are negative
         if(cc.getCpuCores() - cpuCores < 0)
             return false;
         else if (cc.getRam() - ram < 0)
@@ -217,12 +214,11 @@ public class VMHandler {
             sleep(program.getpID());
         }
         //Else if found, we allocate vmHolder's resources for the program and do not push it again in queue
-        else /*if(program.getStartExecTime() < program.getExpectedTime())*/{
+        else {
             System.out.println("Program " + program.getpID() + " assigned to vm");
             long startTime = System.currentTimeMillis()/1000;
             program.setStartExecTime(startTime);
             program.setVm(vmHolder);
-            //GlobalProgramHandler.getProgramHandler().getProgramQueue().push(program);
             vmHolder.alocateResources(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth());
         }
     }
