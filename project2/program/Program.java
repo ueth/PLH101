@@ -203,7 +203,10 @@ public class Program implements Serializable {
     }
 
     public void printFinalReport(){
-        System.out.println("Program: " + pID + " with VM: " + getVm().getVmId() + ", has finished in " + executionTime + " seconds.");
+        if(vm == null)
+            System.out.println("Program: " + pID + ", has finished in " + executionTime + " seconds.");
+        else
+            System.out.println("Program: " + pID + " with VM: " + getVm().getVmId() + ", has finished in " + executionTime + " seconds.");
     }
 
     public void checkIfFinished(){
