@@ -11,10 +11,12 @@ public class VmNetworkedGPU extends VmNetworked{
         this.GPU = GPU;
     }
 
+    @Override
     public int getGPU() {
         return GPU;
     }
 
+    @Override
     public void setGPU(int GPU) {
         this.GPU = GPU;
     }
@@ -42,13 +44,6 @@ public class VmNetworkedGPU extends VmNetworked{
         System.out.print(", SSD: " + getAlocSsd() + " GB");
         System.out.print(", GPU: " + getAlocGPU());
         System.out.println(", Bandwidth: " + getAlocBandwidth() + " Gb/sec]");
-    }
-
-    @Override
-    public double calculateCurrentVMLoad() {
-        double vmload = 0;
-        vmload = ((getAlocCpuCores()/getCpuCores()) + (getAlocRam()/getRam()) + (getAlocSsd()/getSsd()) + (getAlocBandwidth()/ getBandwidth()) + (getAlocGPU()/getGPU()))/(5^3);
-        return vmload;
     }
 
     @Override

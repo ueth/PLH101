@@ -1,7 +1,6 @@
 package project2.program;
 
 import project2.utils.BoundedQueue;
-import project2.utils.GlobalVMHandler;
 import project2.utils.Globals;
 import java.util.ArrayList;
 import java.util.Random;
@@ -20,9 +19,7 @@ public class ProgramHandler {
 
         programArrayList.add(new Program(pID, cpuCores, ram, ssd, gpu, bandwidth, expectedTime, 0, 0, 0, prio));
 
-        //Sort the array based on priority (only when we have 2 or more)
-        if(programArrayList.size() > 1)
-            insertionSort(programArrayList);
+        insertionSort(programArrayList);
     }
 
     /**
@@ -31,11 +28,11 @@ public class ProgramHandler {
      */
     private double calculatePriority(double cpuCores, double ram, double ssd, double gpu, double bandwidth){
         double priority = 0;
-        double totalCores = GlobalVMHandler.getVmh().getTotalCores();
-        double totalRam = GlobalVMHandler.getVmh().getTotalRam();
-        double totalSsd = GlobalVMHandler.getVmh().getTotalSsd();
-        double totalGPU = GlobalVMHandler.getVmh().getTotalGPU();
-        double totalBandwidth = GlobalVMHandler.getVmh().getTotalBandwidth();
+        double totalCores = Globals.globalVmHandler.getTotalCores();
+        double totalRam = Globals.globalVmHandler.getTotalRam();
+        double totalSsd = Globals.globalVmHandler.getTotalSsd();
+        double totalGPU = Globals.globalVmHandler.getTotalGPU();
+        double totalBandwidth = Globals.globalVmHandler.getTotalBandwidth();
 
         //Avoid dividing with zero
         priority = (cpuCores/totalCores) + (ram/totalRam) + (ssd/totalSsd) +
@@ -47,7 +44,11 @@ public class ProgramHandler {
     /**
      * Sort an arraylist based on priority
      */
-    public static void insertionSort(ArrayList<Program> programs) {
+    public void insertionSort(ArrayList<Program> programs) {
+        //Sort the array based on priority (only when we have 2 or more)
+        if(programArrayList.size() <= 1)
+            return;
+
         for (int i = 1; i < programs.size(); i++) {
             Program prog = programs.get(i);
             int j = i - 1;

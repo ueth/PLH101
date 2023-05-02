@@ -4,8 +4,6 @@ import project2.loaders.ProgramLoader;
 import project2.loaders.VMLoader;
 import project2.program.Program;
 import project2.program.ProgramHandler;
-import project2.utils.GlobalProgramHandler;
-import project2.utils.GlobalVMHandler;
 import project2.utils.Globals;
 import project2.virtualMachines.vmExtras.OsType;
 import project2.vmHandler.VMHandler;
@@ -18,8 +16,8 @@ public class CLI {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String [] args){
-        vmh = GlobalVMHandler.createVMHandler();
-        ph = GlobalProgramHandler.createProgramHandler();
+        vmh = Globals.globalVmHandler;
+        ph = Globals.globalProgramHandler;
 
         //Try to load vms-programs from config files
         VMLoader.loadVMS();
@@ -88,7 +86,7 @@ public class CLI {
 
         while(true){
             //Check if a running program has finished
-            for(Program finishedProgram : GlobalProgramHandler.getProgramHandler().getProgramArrayList())
+            for(Program finishedProgram : Globals.globalProgramHandler.getProgramArrayList())
                 //If finished, the program will give back the resources to the VM
                 if(finishedProgram.hasVM())
                     finishedProgram.checkIfFinished();

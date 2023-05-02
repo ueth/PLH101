@@ -10,11 +10,32 @@ public class PlainVM extends VM{
         super(vmId, cpuCores, ram, osType);
         this.ssd = ssd;
     }
-
+    @Override
     public int getSsd() {
         return ssd;
     }
 
+    @Override
+    public void setGPU(int GPU) {
+
+    }
+
+    @Override
+    public int getGPU() {
+        return 0;
+    }
+
+    @Override
+    public void setBandwidth(int Bandwidth) {
+
+    }
+
+    @Override
+    public int getBandwidth() {
+        return 0;
+    }
+
+    @Override
     public void setSsd(int ssd) {
         this.ssd = ssd;
     }
@@ -41,13 +62,6 @@ public class PlainVM extends VM{
     }
 
     @Override
-    public double calculateCurrentVMLoad() {
-        double vmload = 0;
-        vmload = ((getAlocCpuCores()/getCpuCores()) + (getAlocRam()/getRam()) + (getAlocSsd()/getSsd()))/(3^3);
-        return vmload;
-    }
-
-    @Override
     public double calculateNewVMLoad(double cpuCores, double ram, double ssd, double gpu, double bandwidth) {
         double vmload = 0;
         double allocatedCores = getAlocCpuCores();
@@ -63,18 +77,6 @@ public class PlainVM extends VM{
                 + ((allocatedSsd+ssd)/vmSsd)
                      )/(4^3);
 
-        return vmload;
-    }
-
-    @Override
-    public double calculateNewVMLoad(int cpuCores, int ram, int ssd, int gpuOrBandwidth) {
-        return 0;
-    }
-
-    @Override
-    public double calculateNewVMLoad(int cpuCores, int ram, int ssd) {
-        double vmload = 0;
-        vmload = (((getAlocCpuCores()+cpuCores)/getCpuCores()) + ((getAlocRam()+ram)/getRam()) + ((getAlocSsd()+ssd)/getSsd()))/(3^3);
         return vmload;
     }
 

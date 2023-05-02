@@ -4,7 +4,6 @@ import project2.program.Program;
 import project2.virtualMachines.*;
 import project2.virtualMachines.vmExtras.CreateVM;
 import project2.virtualMachines.vmExtras.OsType;
-
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -53,21 +52,14 @@ public class VMHandler {
         if(vm == null)
             return false;
 
-        updateCluster(cpuCores, ram, ssd, bandwidth, GPU);
+        updateCluster(cpuCores - vm.getCpuCores(), ram - vm.getRam(), ssd - vm.getSsd(), bandwidth - vm.getBandwidth(), GPU - vm.getGPU()    );
 
         vm.setCpuCores(cpuCores);
         vm.setOsType(OS);
         vm.setRam(ram);
-        ((PlainVM) vm).setSsd(ssd);
-
-        if (vm instanceof VmNetworkedGPU){
-            ((VmNetworkedGPU) vm).setBandwidth(bandwidth);
-            ((VmNetworkedGPU) vm).setGPU(GPU);
-        }
-        else if(vm instanceof VmNetworked)
-            ((VmNetworked) vm).setBandwidth(bandwidth);
-        else if (vm instanceof VmGPU)
-            ((VmGPU) vm).setGPU(GPU);
+        vm.setSsd(ssd);
+        vm.setGPU(GPU);
+        vm.setBandwidth(bandwidth);
 
         return true;
     }
@@ -90,17 +82,9 @@ public class VMHandler {
             if(vm.getVmId() == vmId){
                 cpuCores = vm.getCpuCores();
                 ram = vm.getRam();
-                ssd = ((PlainVM) vm).getSsd();
-
-                if (vm instanceof VmNetworkedGPU){
-                    bandwidth = ((VmNetworkedGPU) vm).getBandwidth();
-                    GPU = ((VmNetworkedGPU) vm).getGPU();
-                }
-                else if(vm instanceof VmNetworked)
-                    bandwidth = ((VmNetworked) vm).getBandwidth();
-                else if (vm instanceof VmGPU)
-                    bandwidth = ((VmGPU) vm).getGPU();
-
+                ssd = vm.getSsd();
+                bandwidth = vm.getBandwidth();
+                GPU = vm.getGPU();
 
                 //Update Cluster's resources
                 updateCluster(-cpuCores, -ram, -ssd, -bandwidth, -GPU);
@@ -200,6 +184,7 @@ public class VMHandler {
         for(VM vm : vmArrayList){
             System.out.println("STATS " + vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()));
 
+            //If the new load is over 100 we do not enter the if, we also do not enter when the new vm we check has more load than the current vm in vmHolder
             if(vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()) <= 100
                 && (vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()) <=
                 vmHolder.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth())))
@@ -272,7 +257,7 @@ public class VMHandler {
         int total = 0;
 
         for(VM vm : vmArrayList)
-            total += ((PlainVM) vm).getSsd();
+            total += vm.getSsd();
 
         return total;
     }
@@ -285,7 +270,7 @@ public class VMHandler {
         int total = 0;
 
         for(VM vm : vmArrayList)
-            total += (vm instanceof VmGPU) ? ((VmGPU) vm).getGPU() : (vm instanceof VmNetworkedGPU) ? ((VmNetworkedGPU) vm).getGPU() : 0;
+            total += vm.getGPU();
 
         return total;
     }
@@ -298,12 +283,8 @@ public class VMHandler {
         int total = 0;
 
         for(VM vm : vmArrayList)
-            total += (vm instanceof VmNetworkedGPU) ? ((VmNetworkedGPU) vm).getBandwidth() : (vm instanceof VmNetworked) ? ((VmNetworked) vm).getBandwidth() : 0;
+            total += vm.getBandwidth();
 
         return total;
-    }
-
-    public ArrayList<VM> getVmArrayList(){
-        return vmArrayList;
     }
 }

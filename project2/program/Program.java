@@ -1,9 +1,10 @@
 package project2.program;
 
-import project2.utils.GlobalProgramHandler;
+import project2.utils.Globals;
 import project2.virtualMachines.VM;
 
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
@@ -48,7 +49,7 @@ public class Program implements Serializable {
     /**
      * Exports serialized failed program
      */
-    public void exportFailedProgram(){
+    public void exportFailedProgram() {
         try {
             String dirName = "./log";
             Path dirPath = Paths.get(dirName);
@@ -60,9 +61,26 @@ public class Program implements Serializable {
 
             // Create the rejected.out file in the log directory
             String fileName = dirName + "/rejected.out";
+            Path filePath = Paths.get(fileName);
+
+            // Create the file if it doesn't exist
+            if (!Files.exists(filePath)) {
+                Files.createFile(filePath);
+            }
 
             try {
-                ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(fileName));
+                // Use a custom FileOutputStream with append mode set to true
+                FileOutputStream fileOutputStream = new FileOutputStream(fileName, true);
+                // Create a custom ObjectOutputStream that doesn't write a header when appending
+                ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream) {
+                    @Override
+                    protected void writeStreamHeader() throws IOException {
+                        if (fileOutputStream.getChannel().position() == 0) {
+                            super.writeStreamHeader();
+                        }
+                    }
+                };
+
                 outputStream.writeObject(this);
                 outputStream.close();
             } catch (Exception e) {
@@ -74,6 +92,7 @@ public class Program implements Serializable {
             e.printStackTrace();
         }
     }
+
 
     public boolean isProgramDone(){
         return failNum >= 3;
@@ -89,7 +108,7 @@ public class Program implements Serializable {
         }
         //Else we push the program at the end of the queue again
         else{
-            GlobalProgramHandler.getProgramHandler().getProgramQueue().push(this);
+            Globals.globalProgramHandler.getProgramQueue().push(this);
         }
     }
 

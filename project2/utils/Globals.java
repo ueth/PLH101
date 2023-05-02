@@ -1,5 +1,8 @@
 package project2.utils;
 
+import project2.program.ProgramHandler;
+import project2.vmHandler.VMHandler;
+
 public class Globals {
     public static final int cpuCoreNum = 128;
     public static final int ramNum = 256;
@@ -10,4 +13,6 @@ public class Globals {
     //Flags to know if we load vms and programs from configs
     public static boolean hasVMFile = false;
     public static boolean hasProgramFile = false;
+    public static final ProgramHandler globalProgramHandler = new ProgramHandler();
+    public static final VMHandler globalVmHandler = new VMHandler();
 }

@@ -1,6 +1,5 @@
 package project2.loaders;
 
-import project2.utils.GlobalVMHandler;
 import project2.utils.Globals;
 import project2.virtualMachines.vmExtras.OsType;
 
@@ -61,7 +60,7 @@ public class VMLoader {
                     }
                 }
 
-                GlobalVMHandler.getVmh().createVM(cores, ram, OS, ssd, bandwidth, gpu);
+                Globals.globalVmHandler.createVM(cores, ram, OS, ssd, bandwidth, gpu);
             }
 
             reader.close();

@@ -11,10 +11,12 @@ public class VmGPU extends PlainVM{
         this.GPU = GPU;
     }
 
+    @Override
     public int getGPU() {
         return GPU;
     }
 
+    @Override
     public void setGPU(int GPU) {
         this.GPU = GPU;
     }
@@ -25,6 +27,16 @@ public class VmGPU extends PlainVM{
 
     public void setAlocGPU(int alocGPU) {
         this.alocGPU = alocGPU;
+    }
+
+    @Override
+    public void setBandwidth(int Bandwidth) {
+
+    }
+
+    @Override
+    public int getBandwidth() {
+        return 0;
     }
 
     @Override
@@ -40,13 +52,6 @@ public class VmGPU extends PlainVM{
         System.out.print(", Ram: " + getAlocRam() + " GB");
         System.out.print(", SSD: " + getAlocSsd() + " GB");
         System.out.println(", GPU: " + getAlocGPU() + "]");
-    }
-
-    @Override
-    public double calculateCurrentVMLoad() {
-        double vmload = 0;
-        vmload = ((getAlocCpuCores()/getCpuCores()) + (getAlocRam()/getRam()) + (getAlocSsd()/getSsd()) + (getAlocGPU()/getGPU()))/(4^3);
-        return vmload;
     }
 
     @Override

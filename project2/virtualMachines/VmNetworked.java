@@ -11,10 +11,12 @@ public class VmNetworked extends PlainVM{
         this.bandwidth = bandwidth;
     }
 
+    @Override
     public int getBandwidth() {
         return bandwidth;
     }
 
+    @Override
     public void setBandwidth(int bandwidth) {
         this.bandwidth = bandwidth;
     }
@@ -40,13 +42,6 @@ public class VmNetworked extends PlainVM{
         System.out.print(", Ram: " + getAlocRam() + " GB");
         System.out.print(", SSD: " + getAlocSsd() + " GB");
         System.out.println(", GPU: " + getAlocBandwidth() + " Gb/sec]");
-    }
-
-    @Override
-    public double calculateCurrentVMLoad() {
-        double vmload = 0;
-        vmload = ((getAlocCpuCores()/getCpuCores()) + (getAlocRam()/getRam()) + (getAlocSsd()/getSsd()) + (getAlocBandwidth()/ getBandwidth()))/(4^3);
-        return vmload;
     }
 
     @Override

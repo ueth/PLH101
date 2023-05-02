@@ -18,10 +18,7 @@ public abstract class VM {
     }
 
     public abstract void printStats();
-    public abstract double calculateCurrentVMLoad();
     public abstract double calculateNewVMLoad(double cpuCores, double ram, double ssd, double gpu, double bandwidth);
-    public abstract double calculateNewVMLoad(int cpuCores, int ram, int ssd, int gpuOrBandwidth);
-    public abstract double calculateNewVMLoad(int cpuCores, int ram, int ssd);
     public abstract void alocateResources(int cpuCores, int ram, int ssd, int gpu, int bandwidth);
     public int getAlocCpuCores() {
         return alocCpuCores;
@@ -62,6 +59,13 @@ public abstract class VM {
     public void setRam(int ram) {
         this.ram = ram;
     }
+
+    public abstract void setSsd(int ssd);
+    public abstract int getSsd();
+    public abstract void setGPU(int GPU);
+    public abstract int getGPU();
+    public abstract void setBandwidth(int Bandwidth);
+    public abstract int getBandwidth();
 
     public OsType getOsType() {
         return osType;

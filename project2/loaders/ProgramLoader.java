@@ -1,8 +1,6 @@
 package project2.loaders;
 
-import project2.utils.GlobalProgramHandler;
 import project2.utils.Globals;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -54,7 +52,7 @@ public class ProgramLoader {
                     }
                 }
 
-                GlobalProgramHandler.getProgramHandler().createProgram(cores, ram, ssd, gpu, bandwidth, time);
+                Globals.globalProgramHandler.createProgram(cores, ram, ssd, gpu, bandwidth, time);
             }
 
             reader.close();
