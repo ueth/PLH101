@@ -60,7 +60,7 @@ public class VmNetworked extends PlainVM{
         vmload = 100*((( allocatedCores+cpuCores)/ vmCores )
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
-                + ((allocatedBandwidth+bandwidth)/vmBandwidth))/(4^3);
+                + ((allocatedBandwidth+bandwidth)/vmBandwidth))/(4);
 
         return vmload;
     }

@@ -3,7 +3,7 @@ package project2.utils;
 import project2.program.ProgramHandler;
 import project2.vmHandler.VMHandler;
 
-public class Globals {
+public final class Globals {
     public static final int cpuCoreNum = 128;
     public static final int ramNum = 256;
     public static final int ssdNum = 2048;

@@ -3,31 +3,16 @@ package project2;
 import project2.loaders.ProgramLoader;
 import project2.loaders.VMLoader;
 import project2.program.Program;
-import project2.program.ProgramHandler;
+import project2.program.ProgramAssigner;
 import project2.utils.Globals;
 import project2.virtualMachines.vmExtras.OsType;
-import project2.vmHandler.VMHandler;
 
 import java.util.Scanner;
 
 public class CLI {
-    private static VMHandler vmh;
-    private static ProgramHandler ph;
     private static Scanner scanner = new Scanner(System.in);
 
-    public static void main(String [] args){
-        vmh = Globals.globalVmHandler;
-        ph = Globals.globalProgramHandler;
-
-        //Try to load vms-programs from config files
-        VMLoader.loadVMS();
-        ProgramLoader.loadPrograms();
-
-        operateCLI();
-        programAssignToVM();
-    }
-
-    private static void operateCLI(){
+    public static void operateCLI(){
         if(!Globals.hasVMFile)
             handleVMMenu();
 
@@ -74,33 +59,8 @@ public class CLI {
                     createProgram();
                     break;
                 case 2:
-                    ph.printProgramStats();
+                    Globals.globalProgramHandler.printProgramStats();
                     break;
-            }
-        }
-    }
-
-    private static void programAssignToVM(){
-        //First push programs in queue
-        ph.pushProgramsInQueue();
-
-        while(true){
-            //Check if a running program has finished
-            for(Program finishedProgram : Globals.globalProgramHandler.getProgramArrayList())
-                //If finished, the program will give back the resources to the VM
-                if(finishedProgram.hasVM())
-                    finishedProgram.checkIfFinished();
-
-            if(ph.areAllProgramsFinished()){
-                //Print final report of programs
-                for(Program program : ph.getProgramArrayList())
-                    program.printFinalReport();
-                System.out.println("Queue is empty, all programs are either finished or failed");
-                break;
-            }
-            else if(!ph.getProgramQueue().isEmpty()){
-                Program program = ph.getProgramQueue().pop();
-                vmh.assignProgramToVM(program);
             }
         }
     }
@@ -155,7 +115,7 @@ public class CLI {
         System.out.println("Enter GPU");
         GPU = scanner.nextInt();
 
-        vmh.createVM(cpuCores, ram, OS, ssd, bandwidth, GPU);
+        Globals.globalVmHandler.createVM(cpuCores, ram, OS, ssd, bandwidth, GPU);
     }
 
     private static void delete(){
@@ -164,7 +124,7 @@ public class CLI {
         System.out.println("Enter an ID of a VM to delete");
         vmId = scanner.nextInt();
 
-        vmh.deleteVM(vmId);
+        Globals.globalVmHandler.deleteVM(vmId);
     }
 
     private static void update(){
@@ -205,14 +165,14 @@ public class CLI {
         System.out.println("Enter GPU");
         GPU = scanner.nextInt();
 
-        vmh.updateVM(vmId, cpuCores, ram, OS, ssd, bandwidth, GPU);
+        Globals.globalVmHandler.updateVM(vmId, cpuCores, ram, OS, ssd, bandwidth, GPU);
     }
 
     /**
      * Create and add a new program
      */
     private static void createProgram(){
-        if(vmh.getTotalCores() == 0){
+        if(Globals.globalVmHandler.getTotalCores() == 0){
             System.out.println("There are no available VMs at the moment, please create at least one new VM before creating a program");
             return;
         }
@@ -241,12 +201,12 @@ public class CLI {
         System.out.println("Enter expected time");
         expectedTime = scanner.nextInt();
 
-        ph.createProgram(cores, ram, ssd, gpu, bandwidth, expectedTime);
+        Globals.globalProgramHandler.createProgram(cores, ram, ssd, gpu, bandwidth, expectedTime);
 
     }
 
     private static void printVMs(){
         System.out.println("Enter 0 if you want to print all VM info or enter a specific id");
-        vmh.printVMReport(scanner.nextInt());
+        Globals.globalVmHandler.printVMReport(scanner.nextInt());
     }
 }

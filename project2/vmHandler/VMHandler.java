@@ -177,12 +177,15 @@ public class VMHandler {
 
     public void assignProgramToVM(Program program){
         boolean found = false;
+        double vmLoad = 0;
         //In order to have something to compare to, we assign the first one to vmHolder
         VM vmHolder = vmArrayList.get(0);
 
+        System.out.println("Trying to assign Program with id: " + program.getpID());
+
         //iterate through all vms to find the best suited
         for(VM vm : vmArrayList){
-            System.out.println("STATS " + vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()));
+            System.out.println("Calculated new VM Load (before assignment)" + " for ID: " + vm.getVmId() + " will be: " + vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()));
 
             //If the new load is over 100 we do not enter the if, we also do not enter when the new vm we check has more load than the current vm in vmHolder
             if(vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth()) <= 100
@@ -190,6 +193,7 @@ public class VMHandler {
                 vmHolder.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth())))
             {
                 vmHolder = vm;
+                vmLoad = vm.calculateNewVMLoad(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth());
                 found = true;
             }
         }
@@ -200,12 +204,14 @@ public class VMHandler {
         }
         //Else if found, we allocate vmHolder's resources for the program and do not push it again in queue
         else {
-            System.out.println("Program " + program.getpID() + " assigned to vm");
+            System.out.println("Program " + program.getpID() + " assigned to VM: " + vmHolder.getVmId() + " with the new load being: " + vmLoad);
             long startTime = System.currentTimeMillis()/1000;
             program.setStartExecTime(startTime);
             program.setVm(vmHolder);
             vmHolder.alocateResources(program.getCpuCores(), program.getRam(), program.getSsd(), program.getGpu(), program.getBandwidth());
         }
+
+        System.out.println("------------------------------------------------------");
     }
 
     /**

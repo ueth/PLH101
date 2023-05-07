@@ -65,7 +65,7 @@ public class VmNetworkedGPU extends VmNetworked{
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
                 + ((allocatedBandwidth+bandwidth)/vmBandwidth)
-                + ((allocatedGPU+gpu)/vmGPU))/(5^3);
+                + ((allocatedGPU+gpu)/vmGPU))/(5);
 
         return vmload;
     }

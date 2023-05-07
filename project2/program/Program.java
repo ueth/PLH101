@@ -223,7 +223,7 @@ public class Program implements Serializable {
 
     public void printFinalReport(){
         if(vm == null)
-            System.out.println("Program: " + pID + ", has finished in " + executionTime + " seconds.");
+            System.out.println("Program: " + pID + ", has failed.");
         else
             System.out.println("Program: " + pID + " with VM: " + getVm().getVmId() + ", has finished in " + executionTime + " seconds.");
     }

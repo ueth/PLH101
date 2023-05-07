@@ -69,7 +69,7 @@ public class VmGPU extends PlainVM{
         vmload = 100*((( allocatedCores+cpuCores)/ vmCores )
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
-                + ((allocatedGPU+gpu)/vmGPU))/(4^3);
+                + ((allocatedGPU+gpu)/vmGPU))/(4);
 
         return vmload;
     }

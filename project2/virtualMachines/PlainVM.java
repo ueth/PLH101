@@ -75,7 +75,7 @@ public class PlainVM extends VM{
                   ((allocatedCores+cpuCores)/vmCores)
                 + ((allocatedRam+ram)/vmRam)
                 + ((allocatedSsd+ssd)/vmSsd)
-                     )/(4^3);
+                     )/(3);
 
         return vmload;
     }
