@@ -4,7 +4,7 @@ import project2.loaders.ProgramLoader;
 import project2.loaders.VMLoader;
 import project2.program.ProgramAssigner;
 
-public class App {
+public final class App {
     public static void main(String [] args){
         //Try to load vms-programs from config files
         VMLoader.loadVMS();

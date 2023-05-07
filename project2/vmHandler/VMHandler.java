@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-public class VMHandler {
+public final class VMHandler {
     private ComputerCluster cc = new ComputerCluster();
     private ArrayList<VM> vmArrayList = new ArrayList<>();
     private Random r = new Random();

@@ -2,7 +2,7 @@ package project2.utils;
 
 import java.util.ArrayDeque;
 
-public class BoundedQueue<E> {
+public final class BoundedQueue<E> {
     private ArrayDeque<E> queue;
     private int maxSize;
 

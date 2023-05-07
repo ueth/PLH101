@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class VMLoader {
+public final class VMLoader {
     public static void loadVMS(){
         File configFile = new File("./cfg/vms.config");
 

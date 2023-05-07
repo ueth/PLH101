@@ -2,7 +2,7 @@ package project2.virtualMachines;
 
 import project2.virtualMachines.vmExtras.OsType;
 
-public class VmNetworkedGPU extends VmNetworked{
+public final class VmNetworkedGPU extends VmNetworked{
     int GPU;
     int alocGPU = 0;
 

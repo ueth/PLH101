@@ -1,15 +1,11 @@
 package project2;
 
-import project2.loaders.ProgramLoader;
-import project2.loaders.VMLoader;
-import project2.program.Program;
-import project2.program.ProgramAssigner;
 import project2.utils.Globals;
 import project2.virtualMachines.vmExtras.OsType;
 
 import java.util.Scanner;
 
-public class CLI {
+public final class CLI {
     private static Scanner scanner = new Scanner(System.in);
 
     public static void operateCLI(){

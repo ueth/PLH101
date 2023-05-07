@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class ProgramLoader {
 
-    public static void loadPrograms(){
+    public final static void loadPrograms(){
         File configFile = new File("./cfg/programs.config");
 
         if (configFile.exists()) {

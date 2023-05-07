@@ -5,7 +5,7 @@ import project2.utils.Globals;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ProgramHandler {
+public final class ProgramHandler {
     private ArrayList<Program> programArrayList = new ArrayList<>();
     private Random r = new Random();
     private static BoundedQueue<Program> programQueue = new BoundedQueue<>(Globals.queueMaxSize);

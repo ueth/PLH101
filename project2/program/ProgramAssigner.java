@@ -2,7 +2,7 @@ package project2.program;
 
 import project2.utils.Globals;
 
-public class ProgramAssigner {
+public final class ProgramAssigner {
 
     public static void programAssignToVM(){
         //First push programs in queue
