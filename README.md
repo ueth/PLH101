@@ -1,4 +1,4 @@
-Welcome to the PLH101 repository. This repository is a comprehensive collection of coursework for the PLH101 Software Engineering course at the Technical University of Crete (TUC). It comprises two main projects, each designed to explore and elucidate various aspects of software engineering, specifically focusing on the design and implementation of software systems in Java.
+This project is a comprehensive collection of coursework for the PLH101 Software Engineering course at the Technical University of Crete (TUC). It comprises two main projects, each designed to explore and elucidate various aspects of software engineering, specifically focusing on the design and implementation of software systems in Java.
 
 ## Project 1: Project Management System
 
